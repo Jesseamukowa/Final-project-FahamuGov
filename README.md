@@ -3,7 +3,6 @@
 
 **FahamuGov** is a civic education platform built to empower Kenyan youth with accessible, engaging, and simplified knowledge of how government works — from budgeting and resource allocation to public participation and policy-making.
 
----
 
 ## 🚀 Project Vision
 
