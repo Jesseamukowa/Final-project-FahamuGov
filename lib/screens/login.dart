@@ -94,8 +94,8 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                     child: const Icon(
-                      Icons.account_balance,
-                      size: 40,
+                      Icons.local_florist_outlined,
+                      size: 80,
                       color: Colors.white,
                     ),
                   ),
