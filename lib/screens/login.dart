@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'pages/create_account.dart';
+import 'pages/forgot_password.dart';
+import 'pages/home_page.dart'; // Add this import at the top if not present
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -47,6 +49,12 @@ class _LoginPageState extends State<LoginPage> {
           content: Text('Login successful!'),
           backgroundColor: primaryGreen,
         ),
+      );
+
+      // Navigate to homepage
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
       );
     }
   }
@@ -276,6 +284,12 @@ class _LoginPageState extends State<LoginPage> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ForgotPasswordPage(),
+                        ),
+                      );
                       // Handle forgot password
                     },
                     child: const Text(

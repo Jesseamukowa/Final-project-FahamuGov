@@ -18,6 +18,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   bool _isConfirmPasswordVisible = false;
   bool _isLoading = false;
   String _selectedRole = 'Student';
+  bool _agreeToTerms = false;
 
   // Kenyan flag inspired colors
   static const Color primaryRed = Color(0xFFD32F2F);
@@ -26,7 +27,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   static const Color lightGray = Color(0xFFF5F5F5);
   static const Color borderGray = Color(0xFFE0E0E0);
 
-  final List<String> _roleOptions = [
+  final List<String> _roles = [
     'Student',
     'Youth Leader',
     'Teacher',
@@ -44,12 +45,12 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   }
 
   void _handleSignUp() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && _agreeToTerms) {
       setState(() {
         _isLoading = true;
       });
 
-      // Simulate account creation process
+      // Simulate account creation
       await Future.delayed(const Duration(seconds: 2));
 
       setState(() {
@@ -59,16 +60,22 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       // Handle successful account creation
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Account created successfully! Welcome to FahamuGov!'),
+          content: Text('Account created successfully!'),
           backgroundColor: primaryGreen,
-          duration: Duration(seconds: 3),
+        ),
+      );
+    } else if (!_agreeToTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please agree to Terms & Privacy Policy'),
+          backgroundColor: primaryRed,
         ),
       );
     }
   }
 
-  void _navigateToLogin() {
-    Navigator.of(context).pop();
+  void _handleBackToLogin() {
+    Navigator.pop(context);
   }
 
   @override
@@ -80,7 +87,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: primaryBlack),
-          onPressed: _navigateToLogin,
+          onPressed: _handleBackToLogin,
         ),
       ),
       body: SafeArea(
@@ -93,7 +100,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
               children: [
                 const SizedBox(height: 20),
 
-                // Logo Section with Kenyan flag accent
+                // Logo and Flag Section
                 Center(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -102,7 +109,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                         width: 60,
                         height: 60,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(15),
                           gradient: const LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -111,33 +118,43 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                           boxShadow: [
                             BoxShadow(
                               color: primaryGreen.withOpacity(0.3),
-                              blurRadius: 12,
+                              blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
                           ],
                         ),
                         child: const Icon(
                           Icons.local_florist_outlined,
-                          size: 30,
+                          size: 50,
                           color: Colors.white,
                         ),
                       ),
                       const SizedBox(width: 12),
-                      // Small Kenyan flag representation
-                      Container(
-                        width: 24,
-                        height: 16,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: borderGray, width: 0.5),
-                        ),
-                        child: Column(
-                          children: [
-                            Expanded(child: Container(color: primaryBlack)),
-                            Expanded(child: Container(color: primaryRed)),
-                            Expanded(child: Container(color: primaryGreen)),
-                          ],
-                        ),
+                      // Kenyan flag colors indicator
+                      Column(
+                        children: [
+                          Container(
+                            width: 20,
+                            height: 4,
+                            decoration: const BoxDecoration(
+                              color: primaryBlack,
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(2),
+                              ),
+                            ),
+                          ),
+                          Container(width: 20, height: 4, color: primaryRed),
+                          Container(
+                            width: 20,
+                            height: 4,
+                            decoration: const BoxDecoration(
+                              color: primaryGreen,
+                              borderRadius: BorderRadius.vertical(
+                                bottom: Radius.circular(2),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -145,7 +162,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
                 const SizedBox(height: 32),
 
-                // Header Title
+                // Header
                 const Text(
                   'Create Your Account',
                   textAlign: TextAlign.center,
@@ -159,7 +176,6 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
                 const SizedBox(height: 8),
 
-                // Subtitle
                 Text(
                   'Join the civic education community',
                   textAlign: TextAlign.center,
@@ -189,7 +205,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   },
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
                 // Email/Phone Input
                 _buildInputField(
@@ -206,9 +222,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   },
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
-                // Role Selection Dropdown
+                // Role Selection
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -225,31 +241,23 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                       decoration: BoxDecoration(
                         color: lightGray,
                         borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: borderGray),
                       ),
                       child: DropdownButtonFormField<String>(
                         value: _selectedRole,
                         decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: primaryGreen,
-                              width: 2,
-                            ),
-                          ),
+                          border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 16,
                           ),
                           prefixIcon: Icon(
                             Icons.school_outlined,
-                            color: primaryBlack.withOpacity(0.6),
+                            color: primaryGreen.withOpacity(0.8),
                           ),
                         ),
-                        items: _roleOptions.map((String role) {
+                        dropdownColor: Colors.white,
+                        items: _roles.map((String role) {
                           return DropdownMenuItem<String>(
                             value: role,
                             child: Text(role),
@@ -265,7 +273,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   ],
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
                 // Password Input
                 _buildInputField(
@@ -273,20 +281,13 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   controller: _passwordController,
                   hintText: 'Create a strong password',
                   prefixIcon: Icons.lock_outline,
-                  obscureText: !_isPasswordVisible,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isPasswordVisible
-                          ? Icons.visibility_off_outlined
-                          : Icons.visibility_outlined,
-                      color: primaryBlack.withOpacity(0.6),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                  ),
+                  isPassword: true,
+                  isPasswordVisible: _isPasswordVisible,
+                  onTogglePassword: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a password';
@@ -298,7 +299,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   },
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
                 // Confirm Password Input
                 _buildInputField(
@@ -306,20 +307,13 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   controller: _confirmPasswordController,
                   hintText: 'Re-enter your password',
                   prefixIcon: Icons.lock_outline,
-                  obscureText: !_isConfirmPasswordVisible,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isConfirmPasswordVisible
-                          ? Icons.visibility_off_outlined
-                          : Icons.visibility_outlined,
-                      color: primaryBlack.withOpacity(0.6),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                      });
-                    },
-                  ),
+                  isPassword: true,
+                  isPasswordVisible: _isConfirmPasswordVisible,
+                  onTogglePassword: () {
+                    setState(() {
+                      _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                    });
+                  },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please confirm your password';
@@ -329,6 +323,56 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     }
                     return null;
                   },
+                ),
+
+                const SizedBox(height: 24),
+
+                // Terms Agreement
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Checkbox(
+                      value: _agreeToTerms,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _agreeToTerms = value ?? false;
+                        });
+                      },
+                      activeColor: primaryGreen,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: primaryBlack.withOpacity(0.7),
+                              height: 1.4,
+                            ),
+                            children: [
+                              const TextSpan(
+                                text:
+                                    'By creating an account, you agree to our ',
+                              ),
+                              TextSpan(
+                                text: 'Terms & Privacy Policy',
+                                style: TextStyle(
+                                  color: primaryGreen,
+                                  fontWeight: FontWeight.w600,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                              const TextSpan(text: '.'),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
 
                 const SizedBox(height: 32),
@@ -374,7 +418,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 SizedBox(
                   height: 56,
                   child: OutlinedButton(
-                    onPressed: _navigateToLogin,
+                    onPressed: _handleBackToLogin,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: primaryGreen,
                       side: const BorderSide(color: primaryGreen, width: 2),
@@ -388,37 +432,6 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
-                // Terms and Privacy Disclaimer
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: primaryBlack.withOpacity(0.6),
-                        height: 1.4,
-                      ),
-                      children: [
-                        const TextSpan(
-                          text: 'By creating an account, you agree to our ',
-                        ),
-                        TextSpan(
-                          text: 'Terms & Privacy Policy',
-                          style: TextStyle(
-                            color: primaryBlack.withOpacity(0.8),
-                            fontWeight: FontWeight.w600,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                        const TextSpan(text: '.'),
-                      ],
                     ),
                   ),
                 ),
@@ -438,8 +451,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     required String hintText,
     required IconData prefixIcon,
     TextInputType? keyboardType,
-    bool obscureText = false,
-    Widget? suffixIcon,
+    bool isPassword = false,
+    bool isPasswordVisible = false,
+    VoidCallback? onTogglePassword,
     String? Function(String?)? validator,
   }) {
     return Column(
@@ -457,7 +471,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
-          obscureText: obscureText,
+          obscureText: isPassword && !isPasswordVisible,
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: TextStyle(color: primaryBlack.withOpacity(0.4)),
@@ -479,8 +493,18 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
               horizontal: 16,
               vertical: 16,
             ),
-            prefixIcon: Icon(prefixIcon, color: primaryBlack.withOpacity(0.6)),
-            suffixIcon: suffixIcon,
+            prefixIcon: Icon(prefixIcon, color: primaryGreen.withOpacity(0.8)),
+            suffixIcon: isPassword
+                ? IconButton(
+                    icon: Icon(
+                      isPasswordVisible
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      color: primaryBlack.withOpacity(0.6),
+                    ),
+                    onPressed: onTogglePassword,
+                  )
+                : null,
           ),
           validator: validator,
         ),
