@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fahamu_gov/auth_service.dart';
 
 class CreateAccountPage extends StatefulWidget {
-  const CreateAccountPage({Key? key}) : super(key: key);
+  const CreateAccountPage({super.key});
 
   @override
   State<CreateAccountPage> createState() => _CreateAccountPageState();
@@ -50,20 +51,34 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
         _isLoading = true;
       });
 
-      // Simulate account creation
-      await Future.delayed(const Duration(seconds: 2));
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      // Handle successful account creation
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Account created successfully!'),
-          backgroundColor: primaryGreen,
-        ),
-      );
+      try {
+        await authService.value.createUserWithEmailAndPassword(
+          _emailController.text,
+          _passwordController.text,
+        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Account created successfully!'),
+              backgroundColor: primaryGreen,
+            ),
+          );
+          Navigator.pop(context); // or popPage() if that's your navigation
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error creating account: $e'),
+            backgroundColor: primaryRed,
+          ),
+        );
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
     } else if (!_agreeToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

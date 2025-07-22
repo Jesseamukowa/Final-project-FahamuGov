@@ -1,9 +1,14 @@
+import 'package:fahamu_gov/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'screens/splashscreen.dart';
 import 'routes.dart';
 import 'screens/login.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Ensure that the Flutter engine is initialized before running the app
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 

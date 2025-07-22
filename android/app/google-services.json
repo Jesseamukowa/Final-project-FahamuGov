@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "405568349036",
+    "project_id": "fahamugov-app",
+    "storage_bucket": "fahamugov-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:405568349036:android:db93cb988fabb54bc1c949",
+        "android_client_info": {
+          "package_name": "com.example.fahamu_gov"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlrffMCPT6irhMi1raXVnavej5iCVtdNc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
