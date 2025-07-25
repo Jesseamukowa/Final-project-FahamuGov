@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
         );
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => HomeScreen()),
         );
       } on FirebaseAuthException catch (e) {
         // Firebase-specific error handling
@@ -89,9 +89,9 @@ class _LoginPageState extends State<LoginPage> {
         backgroundColor: primaryGreen,
       ),
     );
-    navigator.pushReplacement(
+    Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => HomePage()),
+      MaterialPageRoute(builder: (context) => HomeScreen()),
     );
   }
 

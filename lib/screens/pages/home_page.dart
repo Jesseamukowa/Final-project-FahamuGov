@@ -1,490 +1,703 @@
 import 'package:flutter/material.dart';
+import 'package:fahamu_gov/youtube.dart';
+import 'profile.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
+void main() {
+  runApp(FahamuGovApp());
 }
 
-class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-
-  // Kenyan flag inspired colors
-  static const Color primaryRed = Color(0xFFD32F2F);
-  static const Color primaryGreen = Color(0xFF2E7D32);
-  static const Color primaryBlack = Color(0xFF1A1A1A);
-  static const Color lightGray = Color(0xFFF5F5F5);
-  static const Color cardWhite = Color(0xFFFAFAFA);
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+class FahamuGovApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'FahamuGov',
+      theme: ThemeData(
+        primarySwatch: Colors.red,
+        fontFamily: 'Roboto',
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: HomeScreen(),
+      debugShowCheckedModeBanner: false,
+    );
   }
+}
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-
-              // Welcome Section
-              _buildWelcomeSection(),
-
-              const SizedBox(height: 32),
-
-              // Quick Access Tiles
-              _buildQuickAccessSection(),
-
-              const SizedBox(height: 32),
-
-              // Updates/Announcements Section
-              _buildUpdatesSection(),
-
-              const SizedBox(height: 100), // Space for bottom navigation
-            ],
+      body: _getBodyForIndex(_currentIndex),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+          // Navigate to ProfileScreen if Profile tab is tapped
+          if (index == 4) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProfileScreen()),
+            );
+          }
+        },
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.red[600],
+        unselectedItemColor: Colors.grey[500],
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'Learn'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.video_library),
+            label: 'Reels',
           ),
-        ),
-      ),
-      bottomNavigationBar: _buildBottomNavigation(),
-    );
-  }
-
-  Widget _buildWelcomeSection() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [primaryGreen.withOpacity(0.1), Colors.white],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: primaryGreen.withOpacity(0.2), width: 1),
-      ),
-      child: Row(
-        children: [
-          // Profile Avatar with Progress
-          Stack(
-            children: [
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: const LinearGradient(
-                    colors: [primaryGreen, Color(0xFF1B5E20)],
-                  ),
-                  border: Border.all(color: Colors.white, width: 3),
-                ),
-                child: const Icon(Icons.person, color: Colors.white, size: 30),
-              ),
-              Positioned(
-                bottom: -2,
-                right: -2,
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: primaryRed,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      '7',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(width: 16),
-
-          // Welcome Text
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Welcome back, Amina!',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: primaryBlack,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Ready to learn how your government works today?',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: primaryBlack.withOpacity(0.7),
-                    height: 1.3,
-                  ),
-                ),
-                const SizedBox(height: 8),
-
-                // Progress Bar
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Learning Progress: 68%',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: primaryBlack.withOpacity(0.6),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Container(
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: lightGray,
-                        borderRadius: BorderRadius.circular(3),
-                      ),
-                      child: FractionallySizedBox(
-                        alignment: Alignment.centerLeft,
-                        widthFactor: 0.68,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [primaryGreen, Color(0xFF4CAF50)],
-                            ),
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Community'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );
   }
 
-  Widget _buildQuickAccessSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Quick Access',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: primaryBlack,
-          ),
-        ),
-        const SizedBox(height: 16),
-
-        // Grid of Quick Access Cards
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 1.1,
-          children: [
-            _buildQuickAccessCard(
-              title: 'Learn About\nGovernment',
-              icon: Icons.school_outlined,
-              borderColor: primaryGreen,
-              backgroundColor: primaryGreen.withOpacity(0.1),
-              iconColor: primaryGreen,
-              onTap: () {},
-            ),
-            _buildQuickAccessCard(
-              title: 'Take a Quiz',
-              icon: Icons.quiz_outlined,
-              borderColor: primaryRed,
-              backgroundColor: primaryRed.withOpacity(0.1),
-              iconColor: primaryRed,
-              onTap: () {},
-            ),
-            _buildQuickAccessCard(
-              title: 'Explore\nBudgets',
-              icon: Icons.pie_chart_outline,
-              borderColor: primaryBlack,
-              backgroundColor: primaryBlack.withOpacity(0.1),
-              iconColor: primaryBlack,
-              onTap: () {},
-            ),
-            _buildQuickAccessCard(
-              title: 'Participate\nNow',
-              icon: Icons.how_to_vote_outlined,
-              borderColor: Colors.grey.shade400,
-              backgroundColor: cardWhite,
-              iconColor: Colors.grey.shade600,
-              onTap: () {},
-            ),
-          ],
-        ),
-      ],
-    );
+  // Helper method to show the correct body for each tab
+  Widget _getBodyForIndex(int index) {
+    switch (index) {
+      case 0:
+        return _buildHomeContent();
+      // Add cases for other tabs if needed
+      default:
+        return _buildHomeContent();
+    }
   }
 
-  Widget _buildQuickAccessCard({
-    required String title,
-    required IconData icon,
-    required Color borderColor,
-    required Color backgroundColor,
-    required Color iconColor,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: borderColor, width: 2),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: iconColor.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: iconColor, size: 24),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: primaryBlack,
-                height: 1.2,
+  Widget _buildHomeContent() {
+    return CustomScrollView(
+      slivers: [
+        // Custom Header
+        SliverToBoxAdapter(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.black, Colors.red, Colors.green[500]!],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildUpdatesSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Civic Updates',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: primaryBlack,
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                'View All',
-                style: TextStyle(
-                  color: primaryGreen,
-                  fontWeight: FontWeight.w600,
+            child: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.white,
+                      child: Icon(Icons.person, color: Colors.green[600]),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Welcome, Jesse',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            'Your voice shapes the nation',
+                            style: TextStyle(
+                              color: Colors.red[100],
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.notifications, color: Colors.white),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
-        const SizedBox(height: 16),
-
-        // Update Cards
-        _buildUpdateCard(
-          title: 'Public Participation Open',
-          subtitle: 'Nairobi County Budget Review - Deadline: Jan 30',
-          tag: 'URGENT',
-          tagColor: primaryRed,
-          icon: Icons.campaign_outlined,
-        ),
-
-        const SizedBox(height: 12),
-
-        _buildUpdateCard(
-          title: 'New Learning Module Available',
-          subtitle: 'Understanding County Government Functions',
-          tag: 'NEW',
-          tagColor: primaryGreen,
-          icon: Icons.auto_stories_outlined,
-        ),
-
-        const SizedBox(height: 12),
-
-        _buildUpdateCard(
-          title: 'Youth Forum This Weekend',
-          subtitle: 'Join the discussion on education policy reforms',
-          tag: 'EVENT',
-          tagColor: primaryBlack,
-          icon: Icons.forum_outlined,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildUpdateCard({
-    required String title,
-    required String subtitle,
-    required String tag,
-    required Color tagColor,
-    required IconData icon,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: cardWhite,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200, width: 1),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: tagColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: tagColor, size: 20),
           ),
+        ),
 
-          const SizedBox(width: 12),
+        // Quick Access Tiles
+        SliverToBoxAdapter(
+          child: Transform.translate(
+            offset: Offset(0, -24),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: GridView.count(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 1.2,
+                children: [
+                  _buildQuickAccessTile(
+                    icon: Icons.menu_book,
+                    title: 'Learn About Government',
+                    subtitle: 'Understand how Kenya works',
+                    color: Colors.green[600]!,
+                  ),
+                  _buildQuickAccessTile(
+                    icon: Icons.bar_chart,
+                    title: 'Track the Budget',
+                    subtitle: 'See where your taxes go',
+                    color: Colors.red[600]!,
+                  ),
+                  _buildQuickAccessTile(
+                    icon: Icons.video_library,
+                    title: 'Civic Reels',
+                    subtitle: 'Quick learning videos',
+                    color: Colors.red[500]!,
+                    showBadge: true,
+                  ),
+                  _buildQuickAccessTile(
+                    icon: Icons.chat,
+                    title: 'Join the Conversation',
+                    subtitle: 'Connect with your community',
+                    color: Colors.green[500]!,
+                  ),
+                  // Add this for Profile navigation
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfileScreen(),
+                        ),
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: _buildQuickAccessTile(
+                      icon: Icons.person,
+                      title: 'Profile',
+                      subtitle: 'View and edit your profile',
+                      color: Colors.blue[600] ?? Colors.blue,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
 
-          Expanded(
+        // Featured Reels Section
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: primaryBlack,
-                        ),
+                    Text(
+                      'Featured Reels',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[900],
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: tagColor,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        tag,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    TextButton.icon(
+                      onPressed: () {},
+                      icon: Icon(Icons.arrow_forward, size: 16),
+                      label: Text('View All'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.red[600],
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: primaryBlack.withOpacity(0.6),
-                    height: 1.3,
+                SizedBox(height: 12),
+                Container(
+                  height: 140,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 4,
+                    itemBuilder: (context, index) {
+                      return _buildReelCard(index);
+                    },
                   ),
                 ),
               ],
             ),
           ),
-        ],
+        ),
+
+        // Live Discussion Highlight
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: Card(
+              color: Colors.green[50],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: Colors.green[200]!),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: Colors.green[500],
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.green[100],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            'Live Discussion',
+                            style: TextStyle(
+                              color: Colors.green[800],
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        Spacer(),
+                        Icon(Icons.trending_up, color: Colors.green[600]),
+                      ],
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      'Should Kenya Lower the Voting Age to 16?',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[900],
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Join 234 young Kenyans discussing this hot topic',
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    ),
+                    SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green[600],
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text('Join Now'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+
+        // News & Updates Section
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'News & Updates',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[900],
+                  ),
+                ),
+                SizedBox(height: 12),
+                ...List.generate(3, (index) => _buildNewsCard(index)),
+              ],
+            ),
+          ),
+        ),
+
+        // Quiz of the Day
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, 100),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.green[500]!, Colors.green[600]!],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.emoji_events,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                'Quiz of the Day',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Test Your Knowledge!',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            'How well do you know the Constitution?',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.green[600],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text('Start Quiz'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuickAccessTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    bool showBadge = false,
+  }) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Container(
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: Colors.white, size: 32),
+              SizedBox(height: 8),
+              Text(
+                title,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.9),
+                  fontSize: 12,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              if (showBadge) ...[
+                SizedBox(height: 8),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    'New!',
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildBottomNavigation() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
+  Widget _buildReelCard(int index) {
+    final reels = [
+      {
+        'title': 'Finance Bill 2025',
+        'duration': '21:30',
+        'videourl': 'https://youtu.be/ExG29B-IZuw',
+      },
+      {
+        'title': 'Budget Making process in Kenya',
+        'duration': '3:15',
+        'videourl': 'https://youtu.be/vx_wfGf6IIM',
+      },
+      {
+        'title': 'Education Funding Crisis',
+        'duration': '2:45',
+        'videourl': 'https://youtu.be/bab9HlVgmIA',
+      },
+      {
+        'title': 'Empowering Youth in Governance',
+        'duration': '32:00',
+        'videourl': 'https://youtu.be/xNv7LWDirZI',
+      },
+    ];
+
+    return InkWell(
+      onTap: () {
+        final videoUrl = reels[index]['videourl'];
+        if (videoUrl != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CivicReelPlayer(videoUrl: videoUrl),
+            ),
+          );
+        }
+      },
+      child: Container(
+        width: 160,
+        margin: const EdgeInsets.only(right: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 96,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  const Center(
+                    child: Icon(
+                      Icons.play_arrow,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 4,
+                    right: 4,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        reels[index]['duration'] ?? '',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              reels[index]['title'] ?? '',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[900],
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
-      child: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: primaryGreen,
-        unselectedItemColor: Colors.grey.shade600,
-        selectedLabelStyle: const TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 12,
+    );
+  }
+
+  Widget _buildNewsCard(int index) {
+    final news = [
+      {
+        1: 'Public Participation Forum - Nairobi County Budget',
+        2: 'Today, 2:00 PM',
+        3: 'Forum',
+        'urgent': true,
+      },
+      {
+        1: 'Mashujaa Day Celebrations - Learn About Our Heroes',
+        2: 'Oct 20, 2024',
+        3: 'National Day',
+        'urgent': false,
+      },
+      {
+        1: 'Education Crisis in Kenya as Government fails in paying Free education',
+        2: 'This Week',
+        3: 'Policy',
+        'urgent': false,
+      },
+    ];
+
+    return Card(
+      margin: EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(color: Colors.red[500]!, width: 2),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(12.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey[400]!),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          news[index][3]! as String,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ),
+                      if (news[index]['urgent'] as bool) ...[
+                        SizedBox(width: 8),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.red[100],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            'Urgent',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.red[800],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    news[index][1]! as String,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[900],
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.calendar_today,
+                        size: 12,
+                        color: Colors.grey[500],
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        news[index][2]! as String,
+                        style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
+          ],
         ),
-        unselectedLabelStyle: const TextStyle(
-          fontWeight: FontWeight.w500,
-          fontSize: 12,
-        ),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school_outlined),
-            activeIcon: Icon(Icons.school),
-            label: 'Learn',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.how_to_vote_outlined),
-            activeIcon: Icon(Icons.how_to_vote),
-            label: 'Participate',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
       ),
     );
   }
