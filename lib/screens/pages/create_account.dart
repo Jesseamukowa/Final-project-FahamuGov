@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fahamu_gov/auth_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({super.key});
@@ -56,6 +57,19 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           _emailController.text,
           _passwordController.text,
         );
+        // Get the current user from Firestore Auth
+        final user = await authService.value.getCurrentUser();
+
+        // Store user details in Firestore
+        if (user != null) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set({
+                'fullName': _fullNameController.text,
+                'email': _emailController.text,
+              });
+        }
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fahamu_gov/youtube.dart';
 import 'profile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
   runApp(FahamuGovApp());
@@ -107,14 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Welcome, Jesse',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          _buildWelcomeText(),
                           Text(
                             'Your voice shapes the nation',
                             style: TextStyle(
@@ -419,6 +414,30 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildWelcomeText() {
+    return FutureBuilder<String>(
+      future: _fetchUserName(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Text(
+            'Welcome...',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          );
+        }
+        final name = snapshot.data ?? '';
+        return Text(
+          'Welcome, $name!',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.green[700],
+            fontFamily: 'Poppins',
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildQuickAccessTile({
     required IconData icon,
     required String title,
@@ -489,22 +508,22 @@ class _HomeScreenState extends State<HomeScreen> {
       {
         'title': 'Finance Bill 2025',
         'duration': '21:30',
-        'videourl': 'https://youtu.be/ExG29B-IZuw',
+        'videourl': 'ExG29B-IZuw',
       },
       {
         'title': 'Budget Making process in Kenya',
         'duration': '3:15',
-        'videourl': 'https://youtu.be/vx_wfGf6IIM',
+        'videourl': 'vx_wfGf6IIM',
       },
       {
         'title': 'Education Funding Crisis',
         'duration': '2:45',
-        'videourl': 'https://youtu.be/bab9HlVgmIA',
+        'videourl': 'bab9HlVgmIA',
       },
       {
         'title': 'Empowering Youth in Governance',
         'duration': '32:00',
-        'videourl': 'https://youtu.be/xNv7LWDirZI',
+        'videourl': 'xNv7LWDirZI',
       },
     ];
 
@@ -698,5 +717,19 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  Future<String> _fetchUserName() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return '';
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+    if (!doc.exists) return '';
+    final data = doc.data();
+    final fullName = data?['fullName'] ?? '';
+    // Get only the first name
+    return fullName.split(' ').first;
   }
 }

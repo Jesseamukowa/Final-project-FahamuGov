@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -11,10 +13,12 @@ class _ProfileScreenState extends State<ProfileScreen>
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
 
-  // Mock user data
-  final String userName = "Jesse Amukowa";
-  final String userEmail = "amukowajesse@gmail.com";
-  final String userAvatar = "❤"; // Default emoji avatar
+  late TextEditingController _usernameController;
+  late TextEditingController _emailController;
+
+  String userName = '';
+  String userEmail = '';
+  String userAvatar = '🙂';
 
   @override
   void initState() {
@@ -23,22 +27,43 @@ class _ProfileScreenState extends State<ProfileScreen>
       duration: Duration(milliseconds: 800),
       vsync: this,
     );
-
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
-
     _slideAnimation = Tween<Offset>(begin: Offset(0, 0.3), end: Offset.zero)
         .animate(
           CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
         );
-
     _animationController.forward();
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      final data = doc.data();
+      setState(() {
+        userName = data?['fullName'] ?? user.displayName ?? '';
+        userEmail = data?['email'] ?? user.email ?? '';
+        userAvatar = data?['avatar'] ?? '🙂';
+      });
+      _usernameController = TextEditingController(text: userName);
+      _emailController = TextEditingController(text: userEmail);
+    } else {
+      _usernameController = TextEditingController();
+      _emailController = TextEditingController();
+    }
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    _usernameController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -76,15 +101,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                 child: Column(
                   children: [
                     SizedBox(height: 20),
-
-                    // Profile Avatar Section
                     _buildProfileHeader(),
-
                     SizedBox(height: 40),
-
-                    // Profile Actions
                     _buildProfileActions(),
-
                     SizedBox(height: 30),
                   ],
                 ),
@@ -129,9 +148,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             ),
           ),
         ),
-
         SizedBox(height: 20),
-
         // User Name
         Text(
           userName,
@@ -142,9 +159,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             fontFamily: 'Poppins',
           ),
         ),
-
         SizedBox(height: 6),
-
         // User Email
         Text(
           userEmail,
@@ -226,9 +241,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ),
                   child: Icon(action.icon, color: action.color, size: 24),
                 ),
-
                 SizedBox(width: 16),
-
                 // Text Content
                 Expanded(
                   child: Column(
@@ -255,7 +268,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                     ],
                   ),
                 ),
-
                 // Arrow Icon
                 Icon(
                   Icons.arrow_forward_ios,
@@ -399,7 +411,6 @@ class _ProfileScreenState extends State<ProfileScreen>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Handle bar
           Container(
             width: 40,
             height: 4,
@@ -408,9 +419,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-
           SizedBox(height: 20),
-
           Text(
             'Edit Profile',
             style: TextStyle(
@@ -419,26 +428,53 @@ class _ProfileScreenState extends State<ProfileScreen>
               fontFamily: 'Poppins',
             ),
           ),
-
           SizedBox(height: 20),
-
-          Text(
-            'Profile editing functionality will be available soon. You\'ll be able to update your name, email, avatar, and civic preferences.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-              height: 1.4,
-              fontFamily: 'Roboto',
+          TextField(
+            controller: _usernameController,
+            decoration: InputDecoration(
+              labelText: 'Username',
+              border: OutlineInputBorder(),
             ),
           ),
-
+          SizedBox(height: 16),
+          TextField(
+            controller: _emailController,
+            decoration: InputDecoration(
+              labelText: 'Email',
+              border: OutlineInputBorder(),
+            ),
+          ),
           SizedBox(height: 30),
-
           Container(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () async {
+                final user = FirebaseAuth.instance.currentUser;
+                if (user != null) {
+                  await FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(user.uid)
+                      .update({
+                        'username': _usernameController.text,
+                        'email': _emailController.text,
+                      });
+                  // Optionally update Firebase Auth email
+                  if (_emailController.text != user.email) {
+                    await user.updateEmail(_emailController.text);
+                  }
+                  setState(() {
+                    userName = _usernameController.text;
+                    userEmail = _emailController.text;
+                  });
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Profile updated!'),
+                      backgroundColor: Colors.green[600],
+                    ),
+                  );
+                }
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[600],
                 foregroundColor: Colors.white,
@@ -448,7 +484,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
               ),
               child: Text(
-                'Got it!',
+                'Save',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -457,7 +493,6 @@ class _ProfileScreenState extends State<ProfileScreen>
               ),
             ),
           ),
-
           SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
         ],
       ),
@@ -504,9 +539,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
                 child: Icon(icon, size: 40, color: Colors.green[600]),
               ),
-
               SizedBox(height: 24),
-
               Text(
                 title,
                 style: TextStyle(
@@ -516,9 +549,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   fontFamily: 'Poppins',
                 ),
               ),
-
               SizedBox(height: 12),
-
               Text(
                 'Coming Soon',
                 style: TextStyle(
@@ -528,9 +559,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   fontFamily: 'Poppins',
                 ),
               ),
-
               SizedBox(height: 20),
-
               Text(
                 description,
                 textAlign: TextAlign.center,
