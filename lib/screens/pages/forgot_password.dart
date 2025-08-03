@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -24,6 +25,33 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
   static const Color lightGray = Color(0xFFF5F5F5);
   static const Color borderGray = Color(0xFFE0E0E0);
 
+  Future<void> _handleSendResetLink() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+      try {
+        await FirebaseAuth.instance.sendPasswordResetEmail(
+          email: _emailController.text.trim(),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Password reset email sent!"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } on FirebaseAuthException catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message ?? "Something went wrong"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } finally {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -46,43 +74,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
     super.dispose();
   }
 
-  void _handleSendResetLink() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      // Simulate sending reset link
-      await Future.delayed(const Duration(seconds: 2));
-
-      setState(() {
-        _isLoading = false;
-        _isEmailSent = true;
-      });
-
-      // Start success animation
-      _successAnimationController.forward();
-
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Reset instructions sent successfully!'),
-          backgroundColor: primaryGreen,
-        ),
-      );
-    }
-  }
-
   void _handleBackToLogin() {
     Navigator.pop(context);
   }
 
   bool _isValidEmail(String email) {
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
-  }
-
-  bool _isValidPhone(String phone) {
-    return RegExp(r'^[\+]?[0-9]{10,15}$').hasMatch(phone.replaceAll(' ', ''));
   }
 
   @override
@@ -151,7 +148,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
 
               // Subtitle
               Text(
-                'Enter your email or phone number and we\'ll send you instructions to reset it.',
+                'Enter your email and we\'ll send you instructions to reset it.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
@@ -186,7 +183,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Email or Phone Number',
+                            'Email',
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -235,9 +232,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
                               if (value == null || value.isEmpty) {
                                 return 'Please enter your email or phone number';
                               }
-                              if (!_isValidEmail(value) &&
-                                  !_isValidPhone(value)) {
-                                return 'Please enter a valid email or phone number';
+                              if (!_isValidEmail(value)) {
+                                return 'Please enter a valid email';
                               }
                               return null;
                             },

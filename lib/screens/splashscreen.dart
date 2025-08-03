@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen>
     _fadeController.forward();
     _scaleController.forward();
 
-    await Future.delayed(const Duration(milliseconds: 5500));
+    await Future.delayed(const Duration(milliseconds: 4500));
     if (mounted) {
       Navigator.pushReplacement(
         context,
@@ -106,16 +106,16 @@ class _SplashScreenState extends State<SplashScreen>
                           child: Opacity(
                             opacity: _fadeAnimation.value,
                             child: Container(
-                              width: 120,
-                              height: 120,
+                              width: 100,
+                              height: 100,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(24),
                                 gradient: const LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                   colors: [
-                                    Color(0xFF2E7D32), // Soft green
-                                    Color(0xFF1B5E20), // Darker green
+                                    Color(0xFFFFFFFF),
+                                    Color(0xFFE0E0E0),
                                   ],
                                 ),
                                 boxShadow: [
