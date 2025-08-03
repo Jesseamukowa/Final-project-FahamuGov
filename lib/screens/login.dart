@@ -82,19 +82,6 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void _handleGuestLogin() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Continuing as guest...'),
-        backgroundColor: primaryGreen,
-      ),
-    );
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => HomeScreen()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,16 +110,16 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: primaryGreen.withOpacity(0.3),
+                          color: Colors.grey.withOpacity(0.3),
                           blurRadius: 15,
                           offset: const Offset(0, 5),
                         ),
                       ],
                     ),
-                    child: const Icon(
-                      Icons.local_florist_outlined,
-                      size: 80,
-                      color: Colors.white,
+                    child: Image.asset(
+                      'assets/logo.png',
+                      width: 100,
+                      height: 100,
                     ),
                   ),
                 ),
@@ -387,27 +374,6 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 16),
 
                 // Continue as Guest Button
-                SizedBox(
-                  height: 56,
-                  child: OutlinedButton(
-                    onPressed: _handleGuestLogin,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: primaryGreen,
-                      side: const BorderSide(color: primaryGreen, width: 2),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'Continue as Guest',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-
                 const SizedBox(height: 32),
 
                 // Create Account Link

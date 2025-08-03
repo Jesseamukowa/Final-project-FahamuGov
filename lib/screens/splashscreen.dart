@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen>
     _fadeController.forward();
     _scaleController.forward();
 
-    await Future.delayed(const Duration(milliseconds: 2200));
+    await Future.delayed(const Duration(milliseconds: 5500));
     if (mounted) {
       Navigator.pushReplacement(
         context,
@@ -120,18 +120,22 @@ class _SplashScreenState extends State<SplashScreen>
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(
-                                      0xFF2E7D32,
-                                    ).withOpacity(0.3),
+                                    color: const Color.fromARGB(
+                                      255,
+                                      125,
+                                      128,
+                                      125,
+                                    ).withOpacity(0.5),
                                     blurRadius: 20,
                                     offset: const Offset(0, 8),
                                   ),
                                 ],
                               ),
-                              child: const Icon(
-                                Icons.local_florist_outlined,
-                                size: 80,
-                                color: Colors.white,
+                              child: Image.asset(
+                                'assets/logo.png',
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
                               ),
                             ),
                           ),

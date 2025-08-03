@@ -7,6 +7,8 @@ void main() {
 }
 
 class FahamuGovApp extends StatelessWidget {
+  const FahamuGovApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,6 +25,8 @@ class FahamuGovApp extends StatelessWidget {
 }
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -159,14 +163,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: Icons.video_library,
                     title: 'Civic Reels',
                     subtitle: 'Quick learning videos',
-                    color: Colors.red[500]!,
+                    color: Colors.black,
                     showBadge: true,
                   ),
                   _buildQuickAccessTile(
                     icon: Icons.chat,
                     title: 'Join the Conversation',
                     subtitle: 'Connect with your community',
-                    color: Colors.green[500]!,
+                    color: Colors.grey[600]!,
+                    showBadge: true,
                   ),
                   // Add this for Profile navigation
                   InkWell(
@@ -178,13 +183,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     },
-                    borderRadius: BorderRadius.circular(12),
-                    child: _buildQuickAccessTile(
-                      icon: Icons.person,
-                      title: 'Profile',
-                      subtitle: 'View and edit your profile',
-                      color: Colors.blue[600] ?? Colors.blue,
-                    ),
                   ),
                 ],
               ),
@@ -221,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
                 SizedBox(height: 12),
-                Container(
+                SizedBox(
                   height: 140,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,

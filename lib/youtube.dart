@@ -4,7 +4,7 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 class CivicReelPlayer extends StatefulWidget {
   final String videoUrl;
 
-  CivicReelPlayer({required this.videoUrl});
+  const CivicReelPlayer({super.key, required this.videoUrl});
 
   @override
   _CivicReelPlayerState createState() => _CivicReelPlayerState();

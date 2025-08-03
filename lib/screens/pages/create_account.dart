@@ -132,16 +132,16 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: primaryGreen.withOpacity(0.3),
+                              color: Colors.grey.withOpacity(0.3),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
                           ],
                         ),
-                        child: const Icon(
-                          Icons.local_florist_outlined,
-                          size: 50,
-                          color: Colors.white,
+                        child: Image.asset(
+                          'assets/logo.png',
+                          width: 100,
+                          height: 100,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -158,7 +158,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                               ),
                             ),
                           ),
+                          Container(width: 20, height: 3, color: Colors.white),
                           Container(width: 20, height: 4, color: primaryRed),
+                          Container(width: 20, height: 3, color: Colors.white),
                           Container(
                             width: 20,
                             height: 4,
