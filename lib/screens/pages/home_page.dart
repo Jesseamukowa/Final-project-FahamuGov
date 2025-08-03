@@ -430,7 +430,7 @@ class _HomeScreenState extends State<HomeScreen> {
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: Colors.green[700],
+            color: Colors.white,
             fontFamily: 'Poppins',
           ),
         );

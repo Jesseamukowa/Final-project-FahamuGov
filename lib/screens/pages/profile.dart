@@ -372,19 +372,33 @@ class _ProfileScreenState extends State<ProfileScreen>
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                // Implement actual logout logic
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Logged out successfully'),
-                    backgroundColor: Colors.green[600],
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+              onPressed: () async {
+                Navigator.pop(context); // Close dialog
+
+                try {
+                  await FirebaseAuth.instance.signOut(); // 🔓 Sign out
+
+                  // Optional: Navigate to login screen after logout
+                  Navigator.pushReplacementNamed(context, '/login');
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Logged out successfully'),
+                      backgroundColor: Colors.green[600],
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                  ),
-                );
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error logging out: $e'),
+                      backgroundColor: Colors.red[600],
+                    ),
+                  );
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red[600],
