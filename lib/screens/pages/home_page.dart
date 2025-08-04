@@ -3,6 +3,7 @@ import 'package:fahamu_gov/youtube.dart';
 import 'profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'reels.dart';
 
 void main() {
   runApp(FahamuGovApp());
@@ -51,6 +52,12 @@ class _HomeScreenState extends State<HomeScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ProfileScreen()),
+            );
+          }
+          if (index == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ReelsScreen()),
             );
           }
         },
@@ -154,12 +161,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     subtitle: 'See where your taxes go',
                     color: Colors.red[600]!,
                   ),
-                  _buildQuickAccessTile(
-                    icon: Icons.video_library,
-                    title: 'Civic Reels',
-                    subtitle: 'Quick learning videos',
-                    color: Colors.black,
-                    showBadge: true,
+                  //Civic reels
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ReelsScreen()),
+                      );
+                    },
+                    child: _buildQuickAccessTile(
+                      icon: Icons.video_library,
+                      title: 'Civic Reels',
+                      subtitle: 'Quick learning videos',
+                      color: Colors.black,
+                      showBadge: true,
+                    ),
                   ),
                   _buildQuickAccessTile(
                     icon: Icons.chat,
@@ -168,6 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.grey[600]!,
                     showBadge: true,
                   ),
+
                   // Add this for Profile navigation
                   InkWell(
                     onTap: () {
@@ -178,6 +195,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     },
+                    child: _buildQuickAccessTile(
+                      icon: Icons.person,
+                      title: 'Your Profile',
+                      subtitle: 'View and edit your profile',
+                      color: Colors.blue[600]!,
+                    ),
                   ),
                 ],
               ),

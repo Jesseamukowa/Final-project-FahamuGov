@@ -2,8 +2,13 @@ import 'package:fahamu_gov/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'screens/splashscreen.dart';
-import 'routes.dart';
-import 'screens/login.dart';
+import 'screens/pages/profile.dart';
+import 'package:provider/provider.dart';
+import 'screens/pages/settings/theme_provider.dart';
+import '/screens/pages/settings/settings_provider.dart';
+import 'screens/pages/settings/app_theme.dart';
+
+import 'screens/pages/settings/settings_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,18 +22,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'FahamuGov',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => SettingsProvider()),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            title: 'FahamuGov',
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeProvider.themeMode,
+            home: SplashScreen(), // Keep your existing home screen
+            routes: {
+              '/profile': (context) => ProfileScreen(),
+              '/settings': (context) => SettingsScreen(),
+            },
+            debugShowCheckedModeBanner: false,
+          );
+        },
       ),
-
-      debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      routes: {
-        FahamuRoutes.splashscreen: (context) => SplashScreen(),
-        FahamuRoutes.login: (context) => LoginPage(),
-      },
     );
   }
 }

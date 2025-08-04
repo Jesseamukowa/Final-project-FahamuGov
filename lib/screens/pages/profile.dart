@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'settings/settings_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -323,14 +324,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   void _handleSettings() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => _buildPlaceholderScreen(
-          title: 'Settings',
-          icon: Icons.settings,
-          description:
-              'Customize your FahamuGov experience with privacy, language, and accessibility options.',
-        ),
-      ),
+      MaterialPageRoute(builder: (context) => SettingsScreen()),
     );
   }
 
